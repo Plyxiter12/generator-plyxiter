@@ -3,7 +3,7 @@
  */
 'use strict';
 
-var join = require('path').join;
+var path = require('path');
 var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
 
@@ -39,87 +39,87 @@ module.exports = yeoman.generators.Base.extend({
             this.log(chalk.magenta(
                 'You chose to use angularJS for your webapp!'
             ));
-            //var prompts = [{
-            //    type: 'checkbox',
-            //    name: 'modules',
-            //    message: 'Which modules would you like to include?',
-            //    choices: [
-            //        {
-            //            value: 'animateModule',
-            //            name: 'angular-animate.js',
-            //            checked: false
-            //        }, {
-            //            value: 'cookiesModule',
-            //            name: 'angular-cookies.js',
-            //            checked: false
-            //        }, {
-            //            value: 'resourceModule',
-            //            name: 'angular-resource.js',
-            //            checked: false
-            //        }, {
-            //            value: 'routeModule',
-            //            name: 'angular-route.js',
-            //            checked: false
-            //        }, {
-            //            value: 'sanitizeModule',
-            //            name: 'angular-sanitize.js',
-            //            checked: false
-            //        }, {
-            //            value: 'touchModule',
-            //            name: 'angular-touch.js',
-            //            checked: false
-            //        }
-            //    ]
-            //}];
-            //
-            //this.prompt(prompts, function (answers) {
-            //    var modules = answers.modules;
-            //
-            //    function hasMod(feat) {
-            //        return modules && modules.indexOf(feat) !== -1;
-            //    }
-            //
-            //    this.animateModule = hasMod('animateModule');
-            //    this.cookiesModule = hasMod('cookiesModule');
-            //    this.resourceModule = hasMod('resourceModule');
-            //    this.routeModule = hasMod('routeModule');
-            //    this.sanitizeModule = hasMod('sanitizeModule');
-            //    this.touchModule = hasMod('touchModule');
-            //
-            //    var angMods = [];
-            //
-            //    if (this.animateModule) {
-            //        angMods.push("'ngAnimate'");
-            //    }
-            //
-            //    if (this.cookiesModule) {
-            //        angMods.push("'ngCookies'");
-            //    }
-            //
-            //    if (this.resourceModule) {
-            //        angMods.push("'ngResource'");
-            //    }
-            //
-            //    if (this.routeModule) {
-            //        angMods.push("'ngRoute'");
-            //        this.env.options.ngRoute = true;
-            //    }
-            //
-            //    if (this.sanitizeModule) {
-            //        angMods.push("'ngSanitize'");
-            //    }
-            //
-            //    if (this.touchModule) {
-            //        angMods.push("'ngTouch'");
-            //    }
-            //
-            //    if (angMods.length) {
-            //        this.env.options.angularDeps = '\n    ' + angMods.join(',\n    ') + '\n  ';
-            //    }
-            //
-            //    done();
-            //
-            //}.bind(this));
+            var prompts = [{
+                type: 'checkbox',
+                name: 'modules',
+                message: 'Which modules would you like to include?',
+                choices: [
+                    {
+                        value: 'animateModule',
+                        name: 'angular-animate.js',
+                        checked: false
+                    }, {
+                        value: 'cookiesModule',
+                        name: 'angular-cookies.js',
+                        checked: false
+                    }, {
+                        value: 'resourceModule',
+                        name: 'angular-resource.js',
+                        checked: false
+                    }, {
+                        value: 'routeModule',
+                        name: 'angular-route.js',
+                        checked: false
+                    }, {
+                        value: 'sanitizeModule',
+                        name: 'angular-sanitize.js',
+                        checked: false
+                    }, {
+                        value: 'touchModule',
+                        name: 'angular-touch.js',
+                        checked: false
+                    }
+                ]
+            }];
+
+            this.prompt(prompts, function (answers) {
+                var modules = answers.modules;
+
+                function hasMod(feat) {
+                    return modules && modules.indexOf(feat) !== -1;
+                }
+
+                this.animateModule = hasMod('animateModule');
+                this.cookiesModule = hasMod('cookiesModule');
+                this.resourceModule = hasMod('resourceModule');
+                this.routeModule = hasMod('routeModule');
+                this.sanitizeModule = hasMod('sanitizeModule');
+                this.touchModule = hasMod('touchModule');
+
+                var angMods = [];
+
+                if (this.animateModule) {
+                    angMods.push("'ngAnimate'");
+                }
+
+                if (this.cookiesModule) {
+                    angMods.push("'ngCookies'");
+                }
+
+                if (this.resourceModule) {
+                    angMods.push("'ngResource'");
+                }
+
+                if (this.routeModule) {
+                    angMods.push("'ngRoute'");
+                    this.env.options.ngRoute = true;
+                }
+
+                if (this.sanitizeModule) {
+                    angMods.push("'ngSanitize'");
+                }
+
+                if (this.touchModule) {
+                    angMods.push("'ngTouch'");
+                }
+
+                if (angMods.length) {
+                    this.env.options.angularDeps = '\n    ' + angMods.join(',\n    ') + '\n  ';
+                }
+
+                done();
+
+            }.bind(this));
         }
 
         if (this.knockout) {
@@ -244,54 +244,35 @@ module.exports = yeoman.generators.Base.extend({
     },
 
     wireIndex: function () {
-        //if(this.angular) {
         this.indexFile = this.engine(
-            this.readFileAsString(join(this.sourceRoot(), '_angular.html')),
+            this.readFileAsString(path.join(this.sourceRoot(), 'index.html')),
             this
         );
-        //} else if(this.knockout) {
-        //    this.indexFile = this.engine(
-        //        this.readFileAsString(join(this.sourceRoot(), '_knockout.html')),
-        //        this
-        //    );
-        //} else {
-        //    this.indexFile = this.engine(
-        //        this.readFileAsString(join(this.sourceRoot(), '_index.html')),
-        //        this
-        //    );
-        //}
 
+        // wire Bootstrap plugins
         if (this.includeBootstrap) {
-            var bs = 'bower_components/bootstrap/js/';
-
-            this.indexFile = this.appendFiles({
-                html: this.indexFile,
-                fileType: 'js',
-                optimizedPath: 'scripts/plugins.js',
-                sourceFileList: [
-                    bs + 'affix.js',
-                    bs + 'alert.js',
-                    bs + 'dropdown.js',
-                    bs + 'tooltip.js',
-                    bs + 'modal.js',
-                    bs + 'transition.js',
-                    bs + 'button.js',
-                    bs + 'popover.js',
-                    bs + 'carousel.js',
-                    bs + 'scrollspy.js',
-                    bs + 'collapse.js',
-                    bs + 'tab.js'
-                ],
-                searchPath: '.'
-            });
+            var bs = '../components/bootstrap/js/';
+            this.indexFile = this.appendScripts(this.indexFile, 'scripts/plugins.js', [
+                bs + 'affix.js',
+                bs + 'alert.js',
+                bs + 'dropdown.js',
+                bs + 'tooltip.js',
+                bs + 'modal.js',
+                bs + 'transition.js',
+                bs + 'button.js',
+                bs + 'popover.js',
+                bs + 'carousel.js',
+                bs + 'scrollspy.js',
+                bs + 'collapse.js',
+                bs + 'tab.js'
+            ]);
         }
 
         this.indexFile = this.appendFiles({
             html: this.indexFile,
             fileType: 'js',
             optimizedPath: 'scripts/main.js',
-            sourceFileList: ['scripts/main.js'],
-            searchPath: ['app', '.tmp']
+            sourceFileList: ['scripts/main.js']
         });
     },
 
@@ -301,9 +282,9 @@ module.exports = yeoman.generators.Base.extend({
         this.mkdir('src/scripts');
         this.mkdir('src/styles');
         this.mkdir('src/images');
-        this.template('_main.less', 'src/styles/main.less');
+        this.template('_main.less', 'src/styles/main.less', this);
 
-        this.template('_index.html', 'src/index.html');
+        this.write('src/index.html', this.indexFile);
 
 
         if (this.angular) {
@@ -311,6 +292,7 @@ module.exports = yeoman.generators.Base.extend({
         } else if (this.knockout) {
             this.copy('_knockout.js', 'src/scripts/main.js');
         } else {
+            this.copy('_main.js', 'src/scripts/main.js');
         }
 
     },

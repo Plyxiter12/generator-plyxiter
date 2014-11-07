@@ -1,7 +1,6 @@
 'use strict';
 
 module.exports = function (grunt) {
-    require('load-grunt-tasks')(grunt);
 
     grunt.initConfig({
         pkg: require('./package.json'),
@@ -11,12 +10,14 @@ module.exports = function (grunt) {
                     jshintrc: './.jshintrc'
                 },
                 src: [
-                    '**/index.js',
-                    '*.js'
+                    'app/index.js',
+                    'app/templates/*.js'
                 ]
             }
         }
     });
+
+    grunt.loadNpmTasks('grunt-contrib-jshint');
 
     grunt.registerTask('default', ['jshint']);
 

@@ -1,18 +1,5 @@
-<
-%
-if
-
-(
-includeBootstrap
-
-)
-{
-%
->
-@icon-font-path
-:
-"../bower_components/bootstrap-sass-official/assets/fonts/bootstrap/"
-;
+<%  if(includeBootstrap){%>
+@icon-font-path: "../bower_components/bootstrap-sass-official/assets/fonts/bootstrap/";
 
 .browsehappy {
   margin: 0.2em 0;
@@ -102,14 +89,11 @@ body {
   }
 }
 
-<
-%
-}
-else {
-% > body {
-  background: #fafafa;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #333;
+<% } else { %>
+  body {
+    background: #fafafa;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #333;
 }
 
   .hero-unit {
@@ -134,8 +118,4 @@ else {
     color: #000;
     padding: 0.2em 0;
   }
-< %
-}
-
-%
->
+<% } %>
