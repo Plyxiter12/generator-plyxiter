@@ -1,0 +1,6 @@
+.npmignore
+.editorconfig
+.jshintrc
+.gitattributes
+contributing.md
+test

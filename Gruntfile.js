@@ -12,9 +12,12 @@ module.exports = function (grunt) {
                 },
                 src: [
                     '**/index.js',
-                    '*.js',
-                    '!test/**/*.js',
-                    '!node_modules/**/*.js'
+                    '*.js'
                 ]
             }
-        },
+        }
+    });
+
+    grunt.registerTask('default', ['jshint']);
+
+};
