@@ -191,11 +191,11 @@ module.exports = yeoman.generators.Base.extend({
     },
 
     gruntfile: function () {
-        this.copy('_Gruntfile.js', 'Gruntfile.js');
+        this.template('_Gruntfile.js', 'Gruntfile.js');
     },
 
     git: function () {
-        this.template('_gitignore', '.gitignore');
+        this.template('_gitignore', '.gitignore', this);
         this.copy('_gitattributes', '.gitattributes');
     },
 

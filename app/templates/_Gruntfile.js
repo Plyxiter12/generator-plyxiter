@@ -1,34 +1,59 @@
-/**
- * Created by holeinone1200 on 10/28/14.
- */
 'use strict';
 
 module.exports = function (grunt) {
 
-    require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
-
-    // measures the time each task takes
+    // Time how long tasks take. Can help when optimizing build times
     require('time-grunt')(grunt);
 
-    var appConfig = {
+    // Load grunt tasks automatically
+    require('load-grunt-tasks')(grunt);
+
+    // Configurable paths
+    var config = {
         app: 'src',
         dist: 'dist'
     };
 
-    // Project configuration.
+    // Define the configuration for all the tasks
     grunt.initConfig({
 
         // Project settings
-        yeoman: appConfig,
+        config: config,
 
-        pkg: grunt.file.readJSON('package.json'),
+        // Watches files for changes and runs tasks based on the changed files
+        watch: {
+            bower: {
+                files: ['bower.json'],
+                tasks: ['wiredep']
+            },
+            js: {
+                files: ['<%= config.app %>/scripts/**/*.js'],
+                tasks: ['jshint']
+            },
+            gruntfile: {
+                files: ['Gruntfile.js']
+            },
+            less: {
+                files: ['<%= config.app %>/styles/**/*.less'],
+                tasks: ['less:dev', 'autoprefixer']
+            },
+            styles: {
+                files: ['<%= config.app %>/styles/**/*.css'],
+                tasks: ['newer:copy:styles', 'autoprefixer']
+            },
+            files: [
+                '<%= config.app %>/**/*.html',
+                '<%= config.app %>/images/**/*.*'
+            ]
+        },
 
-        autoprefixer: {
-            multipleFiles: {
-                expand: true,
-                flatten: true,
-                src: '<%= yeoman.app %>/css/*.css',
-                dest: '<%= yeoman.dist %>/css/'
+        // The actual grunt server settings
+        connect: {
+            options: {
+                port: 8000,
+                open: true,
+                // Change this to '0.0.0.0' to access the server from outside
+                hostname: 'localhost'
             }
         },
 
@@ -38,64 +63,25 @@ module.exports = function (grunt) {
                 files: [{
                     dot: true,
                     src: [
-                        'build',
-                        '<%= yeoman.dist %>/{,*/}*',
-                        '!<%= yeoman.dist %>/.git*'
+                        '<%= config.dist %>/*'
                     ]
                 }]
-            },
-            server: 'build'
-        },
-
-        connect: {
-            server: {
-                options: {
-                    port: 9000,
-                    // Change this to '0.0.0.0' to access the server from outside.
-                    hostname: 'localhost',
-                    base: 'build'
-                }
-            }
-
-        },
-
-        htmlmin: {
-            dist: {
-                options: {
-                    collapseWhitespace: true,
-                    conservativeCollapse: true,
-                    collapseBooleanAttributes: true,
-                    removeCommentsFromCDATA: true,
-                    removeOptionalTags: true
-                },
-                files: [{
-                    expand: true,
-                    cwd: '<%= yeoman.dist %>',
-                    src: ['*.html', '*/{,*/}*.html'],
-                    dest: '<%= yeoman.dist %>'
-                }]
             }
         },
 
-        imagemin: {
-            dist: {
-                files: [{
-                    expand: true,
-                    cwd: '<%= yeoman.app %>/images',
-                    src: '{,*/}*.{png,jpg,jpeg,gif}',
-                    dest: '<%= yeoman.dist %>/images'
-                }]
-            }
+        concat: {
+           dist: {}
         },
 
+        // Make sure code styles are up to par and there are no obvious mistakes
         jshint: {
             options: {
-                jshintrc: '.jshintrc'
+                jshintrc: '.jshintrc',
+                reporter: require('jshint-stylish')
             },
             all: [
                 'Gruntfile.js',
-                '<%= yeoman.app %>/scripts/{,*/}*.js',
-                '<%= yeoman.app %>/scripts/vendor/*'
+                '<%= config.app %>/scripts/**/*.js'
             ]
         },
 
@@ -108,53 +94,163 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: '<%= yeoman.app %>/styles',
+                        cwd: '<%= config.app %>/styles',
                         src: ['**/*.less'],
-                        dest: '<%= yeoman.app %>/styles/css',
+                        dest: '<%= config.app %>/styles/css',
                         ext: '.css'
                     }
                 ]
             }
         },
 
-        uglify: {
-            dev: {
-                options: {
-                    banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
-                },
-                build: {
-                    src: '<%= yeoman.app %>/scripts/**/*.js',
-                    dest: 'temp/<%= pkg.name %>.min.js'
+        // Add vendor prefixed styles
+        autoprefixer: {
+            options: {
+                browsers: ['> 1%', 'last 2 versions', 'Firefox ESR', 'Opera 12.1']
+            },
+            dist: {
+                files: [{
+                    expand: true,
+                    cwd: '<% config.dist %>/styles/',
+                    src: '**/*.css',
+                    dest: '<% config.dist %>/styles/'
+                }]
+            }
+        },
+
+        // Automatically inject Bower components into the HTML file
+        wiredep: {
+            app:{
+                src: ['<% config.dist %>/**/*.html']
+            }
+        },
+
+
+        // Renames files for browser caching purposes
+        rev: {
+            dist: {
+                files: {
+                    src: [
+                        '<%= config.dist %>/scripts/**/*.js',
+                        '<%= config.dist %>/styles/**/*.css',
+                        '<%= config.dist %>/images/**/.*',
+                        '<%= config.dist %>/styles/fonts/**/*.*',
+                        '<%= config.dist %>/*.{ico,png}'
+                    ]
                 }
             }
-
         },
 
-        watch: {
-            less: {
-                files: ['<%= yeoman.app %>/styles/*.less'],
-                tasks: ['less:dev']
+        // Reads HTML for usemin blocks to enable smart builds that automatically
+        // concat, minify and revision files. Creates configurations in memory so
+        // additional tasks can operate on them
+        useminPrepare: {
+            options: {
+                dest: '<%= config.dist %>'
+            },
+            html: '<%= config.app %>/index.html'
+        },
+
+        // Performs rewrites based on rev and the useminPrepare configuration
+        usemin: {
+            options: {
+                assetsDirs: [
+                    '<%= config.dist %>',
+                    '<%= config.dist %>/images',
+                    '<%= config.dist %>/styles'
+                ]
+            },
+            html: ['<%= config.dist %>/{,*/}*.html'],
+            css: ['<%= config.dist %>/styles/{,*/}*.css']
+        },
+
+        // The following *-min tasks produce minified files in the dist folder
+        imagemin: {
+            dist: {
+                files: [{
+                    expand: true,
+                    cwd: '<%= config.app %>/images',
+                    src: '**/*.{gif,jpeg,jpg,png}',
+                    dest: '<%= config.dist %>/images'
+                }]
             }
         },
 
-        wiredep: {
-            app: {
-                src: ['<%= yeoman.app %>/index.html']
+        svgmin: {
+            dist: {
+                files: [{
+                    expand: true,
+                    cwd: '<%= config.app %>/images',
+                    src: '{,*/}*.svg',
+                    dest: '<%= config.dist %>/images'
+                }]
+            }
+        },
+
+        htmlmin: {
+            dist: {
+                options: {
+                    collapseBooleanAttributes: true,
+                    collapseWhitespace: true,
+                    conservativeCollapse: true,
+                    removeAttributeQuotes: true,
+                    removeCommentsFromCDATA: true,
+                    removeEmptyAttributes: true,
+                    removeOptionalTags: true,
+                    removeRedundantAttributes: true,
+                    useShortDoctype: true
+                },
+                files: [{
+                    expand: true,
+                    cwd: '<%= config.dist %>',
+                    src: '**/*.html',
+                    dest: '<%= config.dist %>'
+                }]
+            }
+        },
+
+        // Copies remaining files to places other tasks can use
+        copy: {
+            dist: {
+                files: [{
+                    expand: true,
+                    dot: true,
+                    cwd: '<%= config.app %>',
+                    dest: '<%= config.dist %>',
+                    src: [
+                        '*.{ico,png,txt}',
+                        'images/**/*.*',
+                        '**/*.html',
+                        'styles/css/**/*.*'
+                    ]
+                }]
             }
         }
     });
 
-    // task(s).
+
     grunt.registerTask('server', [
-        'newer:less:dev',
-        'clean:server',
-        'wiredep',
-        'connect',
-        'watch']);
+      'wiredep',
+      'autoprefixer',
+      'watch'
+    ]);
 
     grunt.registerTask('build', [
+        'clean:dist',
+        'wiredep',
+        'useminPrepare',
+        'autoprefixer',
+        'concat',
+        'cssmin',
+        'uglify',
+        'copy:dist',
+        'rev',
+        'usemin',
+        'htmlmin'
+    ]);
+
+    grunt.registerTask('default', [
         'newer:jshint',
-        'newer:less:dev',
-        'newer:autoprefixer',
-        'newer:uglify:dev']);
+        'build'
+    ]);
 };
