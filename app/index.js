@@ -239,6 +239,10 @@ module.exports = yeoman.generators.Base.extend({
         this.copy('_jshintrc', '.jshintrc');
     },
 
+    favicon: function () {
+        this.copy('favicon.ico', 'src/favicon.ico')
+    },
+
     editorConfig: function () {
         this.copy('_editorconfig', '.editorconfig');
     },
@@ -271,8 +275,8 @@ module.exports = yeoman.generators.Base.extend({
         this.indexFile = this.appendFiles({
             html: this.indexFile,
             fileType: 'js',
-            optimizedPath: 'scripts/main.js',
-            sourceFileList: ['scripts/main.js']
+            optimizedPath: 'src/scripts/main.js',
+            sourceFileList: ['src/scripts/main.js']
         });
     },
 
