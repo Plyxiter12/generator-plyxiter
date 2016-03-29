@@ -6,140 +6,102 @@
 var path = require('path');
 var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
+// var portfolio = require('../portfolio_website.js');
 
 module.exports = yeoman.generators.Base.extend({
 
     constructor: function () {
         yeoman.generators.Base.apply(this, arguments);
 
-        this.option('angular', {
-            desc: 'Use angularJS for your web application',
+        //portfolio website option
+        this.option('portfolio', {
+            desc: 'Framework for a generic portfolio website',
             type: Boolean,
             defaults: false
         });
-        this.angular = this.options.angular;
 
-        this.option('knockout', {
-            desc: 'Use Knockoutjs for your web application',
+        this.option('app', {
+            desc: 'Framework for a web application',
             type: Boolean,
             defaults: false
         });
-        this.knockout = this.options.knockout;
+
+        this.app = this.options.app;
+        this.portfolio = this.options.portfolio;
 
         this.pkg = require('../package.json');
 
     },
 
-    framework: function () {
+    appName: function() {
+        var done = this.async();
+        this.prompt({
+            type    : 'input',
+            name    : 'name',
+            message : 'Your project name',
+            default : this.appname // Default to current folder name
+        }, function (answers) {
+            this.appname = answers.name;
+            this.log(answers.name);
+            done();
+        }.bind(this));
+    },
 
-        if (this.angular) {
+    cssFramework: function() {
+        var done = this.async();
+
+        var prompts = [{
+            type: 'confirm',
+            name: 'cssFramework',
+            message: 'Would you like to include Bootstrap?'
+        }];
+
+        this.prompt(prompts, function(answers) {
+            var features = answers.features;
+
+            function hasFeature(feat) {
+              return features && features.indexOf(feat) !== -1;
+            }
+
+            this.includeBootstrap = hasFeature('includeBootstrap');
+
+            done();
+        }.bind(this));
+    },
+
+    nodePackages: function() {
+        if(!this.portfolio && !this.app){
             var done = this.async();
 
-            this.log(require('yosay')());
-            this.log(chalk.magenta(
-                'You chose to use angularJS for your webapp!'
-            ));
             var prompts = [{
                 type: 'checkbox',
-                name: 'modules',
-                message: 'Which modules would you like to include?',
-                choices: [
-                    {
-                        value: 'animateModule',
-                        name: 'angular-animate.js',
-                        checked: false
-                    }, {
-                        value: 'cookiesModule',
-                        name: 'angular-cookies.js',
-                        checked: false
-                    }, {
-                        value: 'resourceModule',
-                        name: 'angular-resource.js',
-                        checked: false
-                    }, {
-                        value: 'routeModule',
-                        name: 'angular-route.js',
-                        checked: false
-                    }, {
-                        value: 'sanitizeModule',
-                        name: 'angular-sanitize.js',
-                        checked: false
-                    }, {
-                        value: 'touchModule',
-                        name: 'angular-touch.js',
-                        checked: false
-                    }
-                ]
+                name: 'features',
+                message: 'What node modules would you like?',
+                choices: [{
+                    name: 'Browserify',
+                    value: 'includeBrowserify',
+                    checked: true
+                }]
             }];
 
             this.prompt(prompts, function (answers) {
-                var modules = answers.modules;
+                var features = answers.features;
 
-                function hasMod(feat) {
-                    return modules && modules.indexOf(feat) !== -1;
+                function hasFeature(feat) {
+                    return features && features.indexOf(feat) !== -1;
                 }
 
-                this.animateModule = hasMod('animateModule');
-                this.cookiesModule = hasMod('cookiesModule');
-                this.resourceModule = hasMod('resourceModule');
-                this.routeModule = hasMod('routeModule');
-                this.sanitizeModule = hasMod('sanitizeModule');
-                this.touchModule = hasMod('touchModule');
-
-                var angMods = [];
-
-                if (this.animateModule) {
-                    angMods.push("'ngAnimate'");
-                }
-
-                if (this.cookiesModule) {
-                    angMods.push("'ngCookies'");
-                }
-
-                if (this.resourceModule) {
-                    angMods.push("'ngResource'");
-                }
-
-                if (this.routeModule) {
-                    angMods.push("'ngRoute'");
-                    this.env.options.ngRoute = true;
-                }
-
-                if (this.sanitizeModule) {
-                    angMods.push("'ngSanitize'");
-                }
-
-                if (this.touchModule) {
-                    angMods.push("'ngTouch'");
-                }
-
-                if (angMods.length) {
-                    this.env.options.angularDeps = '\n    ' + angMods.join(',\n    ') + '\n  ';
-                }
+                this.includeBrowserify = hasFeature('includeBrowserify');
 
                 done();
-
             }.bind(this));
-        }
-
-        if (this.knockout) {
-            this.log(require('yosay')());
-            this.log(chalk.magenta(
-                'You chose to use Knockout for your webapp!'
-            ));
+        }else if(this.app){
+            this.includeBrowserify = true;
         }
     },
 
-    askFor: function () {
+    bowerComponents: function () {
         var done = this.async();
-
-        if (!this.options['default']) {
-            this.log(require('yosay')());
-            this.log(chalk.magenta(
-                'Out of the box I include an HTML5 Boilerplate, LESS css & a ' +
-                'Gruntfile.js to build your app.'
-            ));
-        }
 
         var prompts = [{
             type: 'checkbox',
@@ -149,25 +111,13 @@ module.exports = yeoman.generators.Base.extend({
                 name: 'jQuery',
                 value: 'includeJquery',
                 checked: true
-            }, {
-                name: 'Bootstrap',
-                value: 'includeBootstrap',
-                checked: false
-            }, {
-                name: 'Modernizr',
-                value: 'includeModernizr',
-                checked: false
-            }, {
-                name: 'require.js',
-                value: 'includeRequire',
-                checked: false
-            }, {
+            },{
                 name: 'FontAwesome',
                 value: 'includeFontAwesome',
-                checked: false
+                checked: true
             }, {
-                name: 'Underscore',
-                value: 'includeUnderscore',
+                name: 'Lodash',
+                value: 'includeLodash',
                 cehcked: false
             }]
         }];
@@ -180,18 +130,25 @@ module.exports = yeoman.generators.Base.extend({
             }
 
             this.includeJquery = hasFeature('includeJquery');
-            this.includeBootstrap = hasFeature('includeBootstrap');
-            this.includeModernizr = hasFeature('includeModernizr');
-            this.includeRequire = hasFeature('includeRequre');
             this.includeFontAwesome = hasFeature('includeFontAwesome');
-            this.includeUnderscore = hasFeature('includeUnderscore');
+            this.includeLodash = hasFeature('includeLodash');
 
             done();
         }.bind(this));
     },
 
-    gruntfile: function () {
-        this.template('_Gruntfile.js', 'Gruntfile.js');
+    gulp: function () {
+        this.copy('_Gulp.js', 'gulpfile.js');
+        this.copy('gulp/config.js', 'gulp/config.js');
+        this.copy('gulp/index.js', 'gulp/index.js');
+        this.directory('gulp/common', 'gulp/tasks');
+
+        if(this.app){
+            this.directory('gulp/app', 'gulp/tasks');
+        }
+        else if(this.portfolio){
+            this.directory('gulp/portfolio', 'gulp/tasks');
+        }
     },
 
     git: function () {
@@ -211,25 +168,17 @@ module.exports = yeoman.generators.Base.extend({
         };
 
         if (this.includeBootstrap) {
-            bower.dependencies.bootstrap = "~3.2.0";
+            bower.dependencies.bootstrap = '~3.2.0';
         }
         if (this.includeJquery) {
-            bower.dependencies.jquery = "~1.11.1";
-        }
-        if (this.includeModernizr) {
-            bower.dependencies.modernizr = "~2.8.2";
-        }
-        if (this.includeRequire) {
-            bower.dependencies.require = "*";
+            bower.dependencies.jquery = '~1.11.1';
         }
         if (this.includeFontAwesome) {
-            bower.dependencies.fontAwesome = "*";
+            bower.dependencies.fontawesome = '*';
         }
-        if (this.includeUnderscore) {
-            bower.dependencies.underscore = "*";
+        if (this.includeLodash) {
+            bower.dependencies.lodash = '*';
         }
-
-        bower.dependencies.less = '*';
 
         this.copy('_bowerrc', '.bowerrc');
         this.write('bower.json', JSON.stringify(bower, null));
@@ -240,63 +189,34 @@ module.exports = yeoman.generators.Base.extend({
     },
 
     favicon: function () {
-        this.copy('favicon.ico', 'src/favicon.ico')
+        this.copy('favicon.ico', 'src/favicon.ico');
     },
 
     editorConfig: function () {
         this.copy('_editorconfig', '.editorconfig');
     },
 
-    wireIndex: function () {
-        this.indexFile = this.engine(
-            this.readFileAsString(path.join(this.sourceRoot(), 'index.html')),
-            this
-        );
-
-        // wire Bootstrap plugins
-        if (this.includeBootstrap) {
-            var bs = '../components/bootstrap/js/';
-            this.indexFile = this.appendScripts(this.indexFile, 'scripts/plugins.js', [
-                bs + 'affix.js',
-                bs + 'alert.js',
-                bs + 'dropdown.js',
-                bs + 'tooltip.js',
-                bs + 'modal.js',
-                bs + 'transition.js',
-                bs + 'button.js',
-                bs + 'popover.js',
-                bs + 'carousel.js',
-                bs + 'scrollspy.js',
-                bs + 'collapse.js',
-                bs + 'tab.js'
-            ]);
-        }
-
-        this.indexFile = this.appendFiles({
-            html: this.indexFile,
-            fileType: 'js',
-            optimizedPath: 'src/scripts/main.js',
-            sourceFileList: ['src/scripts/main.js']
-        });
-    },
-
     app: function () {
 
+        //create file structure
         this.directory('src');
         this.mkdir('src/scripts');
         this.mkdir('src/styles');
         this.mkdir('src/images');
-        this.template('_main.less', 'src/styles/main.less', this);
+        this.template('assets/_styles.less', 'src/styles/styles.less', this);
 
-        this.write('src/index.html', this.indexFile);
+        if (this.portfolio) {
+            this.directory('nunjucks/portfolio', 'src/templates');
+            this.template('assets/portfolio/_main.less', 'src/styles/main.less', this);
+            this.template('assets/portfolio/_variables.less', 'src/styles/variables.less', this);
+            this.copy('assets/portfolio/_portfolio_website.js', 'src/scripts/app.js');
+        }
 
-
-        if (this.angular) {
-            this.copy('_angular.js', 'src/scripts/main.js');
-        } else if (this.knockout) {
-            this.copy('_knockout.js', 'src/scripts/main.js');
-        } else {
-            this.copy('_main.js', 'src/scripts/main.js');
+        if(this.app) {
+            this.directory('nunjucks/app', 'src/templates');
+            this.template('assets/app/_main.less', 'src/styles/main.less', this);
+            this.template('assets/app/_variables.less', 'src/styles/variables.less', this);
+            this.copy('assets/app/_app.js', 'src/scripts/app.js');
         }
 
     },

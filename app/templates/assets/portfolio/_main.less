@@ -1,0 +1,202 @@
+@import "variables.less";
+
+body{
+   position: absolute;
+   width: 100%;
+   height: 100%;
+   padding:0;
+   margin:0;
+ }
+
+ .header {
+   width: @grid-size;
+   height: 150px;
+   position: absolute;
+   top: 100px;
+   left: 50%;
+   text-align: center;
+   text-transform: uppercase;
+   margin-left: -(@grid-size/2);
+   font-family: @font, sans-serif;
+   color: @font-color;
+   font-size: @header-font-size;
+   z-index: 10;
+ }
+
+ .container {
+   width: 100%;
+   height: 100%;
+   min-width: 780px;
+   min-height: 950px;
+   position: absolute;
+   top: 0;
+   margin: 0;
+   padding: 0;
+   background: white fixed center;
+ }
+
+ .grid {
+   width: auto;
+   height: auto;
+   position: absolute;
+   display: block;
+   left: 50%;
+   top: 450px;
+   margin-left: -(618px/2); //half of the grid width
+   margin-top: -@row-height;
+   border: 5px solid white;
+
+   .grid-row {
+     width: auto;
+     height: auto;
+     display: block;
+     list-style: none;
+   }
+
+   .grid-element {
+     width: @grid-size/3;
+     height: @row-height;
+     padding: 0;
+     position: relative;
+     display: inline-block;
+     font-family: @font, sans-serif;
+     color: @font-color;
+     background-color: transparent;
+     opacity: 1;
+     font-size: @font-size;
+     text-transform: uppercase;
+     text-decoration: none;
+     text-align: center;
+     transition-property: background, color, opacity;
+     transition-duration: 0.5s, 0.5s, 0.5s;
+     transition-timing-function: ease, ease, ease;
+     z-index: 10;
+
+     &:hover {
+       background-color: black;
+       opacity: .5;
+       color: white;
+       cursor: pointer;
+       transition-property: background, color, opacity;
+       transition-duration: 0.5s, 0.5s, 0.5s;
+       transition-timing-function: ease, ease, ease;
+     }
+   }
+
+   .text {
+     width: 100%;
+     position: absolute;
+     top: 50%;
+     left: 50%;
+     margin-top: -((@font-size+5)/2);
+     margin-bottom: 0;
+     margin-left: -(@grid-size/6);
+     padding:0;
+     z-index: 10;
+   }
+ }
+
+ .download-button {
+   width: @grid-size/3;
+   height: @button-height;
+   top: 725px;
+   left: 50%;
+   margin-left: -100px;
+   position: absolute;
+   display: block;
+   font-family: @font, sans-serif;
+   text-align: center;
+   color: white;
+   opacity: .5;
+   text-transform: uppercase;
+   background-color: @button-color;
+   transition-property: background, color, opacity;
+   transition-duration: 0.5s, 0.5s, 0.5s;
+   transition-timing-function: ease, ease, ease;
+   z-index: 10;
+
+   &:hover {
+     background-color: @button-color;
+     color: white;
+     cursor: pointer;
+     opacity: 1;
+     transition-property: background, color, opacity;
+     transition-duration: 0.5s, 0.5s, 0.5s;
+     transition-timing-function: ease, ease, ease;
+
+   }
+
+   p {
+     opacity: 1;
+     margin: 10px;
+     z-index: 11;
+   }
+ }
+
+ .footer {
+   width: 100%;
+   height: 50px;
+   min-width: 780px;
+   left: 0;
+   bottom: 0;
+   position: fixed;
+   background-color: @footer-color;
+   padding: 5px;
+   z-index: 200;
+
+   .social-media {
+     height: 50px;
+     width: auto;
+     position: relative;
+     float: left;
+     display: inline;
+
+     .media-button {
+       position: relative;
+       margin: 0 20px 0 20px;
+       text-decoration: none;
+       color: white;
+
+       &:hover {
+         cursor: pointer;
+       }
+     }
+
+     .fa {
+       margin-top: 5px;
+       font-size: 40px;
+       transition:  color, 0.3s, ease;
+     }
+
+     .fa-facebook-square:hover {
+       color: @facebook-color;
+       transition:  color, 0.3s, ease;
+     }
+
+     .fa-google-plus-square:hover {
+       color: @google-plus-color;
+       transition:  color, 0.5s, ease;
+     }
+
+     .fa-twitter-square:hover {
+       color: @twitter-color;
+       transition:  color, 0.5s, ease;
+     }
+
+     .fa-github-square:hover {
+       color: @github-color;
+       transition:  color, 0.5s, ease;
+     }
+   }
+
+   .signature {
+     margin-right: 20px;
+     font-family: @font, sans-serif;
+     text-transform: uppercase;
+     float: right;
+     width: auto;
+     color: @font-hover-color;
+     font-size: 20px;
+
+   }
+ }

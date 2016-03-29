@@ -12,7 +12,7 @@
     "files": [
         "app"
     ],
-    "repository": "plyxier12/generator-angular",
+    "repository": "plyxier12/generator-webapp",
     "dependencies": {
         "wiredep": "^1.0.0",
         "yeoman-generator": "^0.16.0",
