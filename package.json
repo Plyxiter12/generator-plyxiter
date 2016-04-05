@@ -1,5 +1,5 @@
 {
-    "name": "generator-plyxiter-webapp",
+    "name": "generator-plyxiter",
     "version": "0.0.1",
     "description": "Custom Yeoman generator",
     "keywords": [
@@ -8,20 +8,22 @@
         "app"
     ],
     "author": "Andy Thompson",
-    "main": "app/index.js",
+    "main": "generators/app/index.js",
     "files": [
-        "app"
+        "generators/app",
+        "generators/portfolio",
+        "generators/webapp"
     ],
-    "repository": "plyxier12/generator-webapp",
+    "repository": "plyxier12/generator-plyxiter",
     "dependencies": {
-        "wiredep": "^1.0.0",
-        "yeoman-generator": "^0.16.0",
-        "yosay": "^0.2.0",
-        "chalk": "^0.4.0"
+        "wiredep": "*",
+        "yeoman-generator": "*",
+        "yosay": "*",
+        "chalk": "*"
     },
     "devDependencies": {
-        "grunt": "~0.4.1",
-        "grunt-contrib-jshint": "~0.8.0"
+        "grunt": "*",
+        "grunt-contrib-jshint": "*"
     },
     "engines": {
         "node": ">=0.10.0",
