@@ -7,11 +7,8 @@ var gulp = require('gulp');
 var gutil = require('gulp-util');
 var logger = require('morgan');
 var openLink = require('open');
-var path = require('path');
 
 var settings = {
-  devRoot: path.resolve(process.cwd(), config.APP_DIST),
-  distRoot: path.resolve(process.cwd(), config.APP_PROD),
 
   staticOptions: {
     extensions: ['html'],
@@ -19,34 +16,17 @@ var settings = {
   }
 };
 
-gulp.task('dev-server', function() {
-  var url = config.DEV_HOST + config.DEV_PORT;
-
-  express()
-    .use(compress())
-    .use(logger('dev'))
-    .use('/', express.static(settings.devRoot, settings.staticOptions))
-    .listen(config.DEV_PORT);
-
-  gutil.log('\n* * * * * * * * * * * * * * * * *');
-  gutil.log(gutil.colors.green('Development Server: ' + url));
-  gutil.log('* * * * * * * * * * * * * * * * *\n');
-
-  openLink(url);
-});
-
-gulp.task('dist-server', function() {
-  var url = config.DIST_HOST + config.DIST_PORT;
+gulp.task('prod-server', function() {
+  var url = config.PROD_HOST + config.PROD_PORT;
 
   express()
     .use(compress())
     .use(logger('tiny'))
-    .use('/', express.static(settings.distRoot, settings.staticOptions))
-    .listen(config.DIST_PORT);
-
-  gutil.log('\n* * * * * * * * * * * * * * * * *');
-  gutil.log(gutil.colors.green('Distribution Server: ' + url));
-  gutil.log('* * * * * * * * * * * * * * * * *\n');
+    .use('/', express.static(config.APP_CDN, settings.staticOptions))
+    .listen(config.PROD_PORT);
+  gutil.log(gutil.colors.green('***************************'));
+  gutil.log(gutil.colors.green('Production Server: ' + url));
+  gutil.log(gutil.colors.green('***************************'));
 
   openLink(url);
 });

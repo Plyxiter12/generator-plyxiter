@@ -1,15 +1,15 @@
-var gulp = require('gulp');
-var gulpSequence = require('gulp-sequence');
+'use strict';
 
-gulp.task('build', function(cb) {
-    gulpSequence(
-        'clean-dist',
-        'copy-image',
-        ['styles', 'nunjucks'],
-        ['build-app', 'build-vendor'],
-        'preprocess-dev',
-        'dev-server',
-        'watch-dev',
-        cb
-    );
+var gulp = require('gulp');
+var runSequence = require('run-sequence');
+
+gulp.task('build', function() {
+  runSequence(
+      'clean-dist',
+      'copy-image',
+      ['styles', 'nunjucks'],
+      ['build-app', 'build-vendor'],
+      'preprocess-dev',
+      'browser-sync'
+  );
 });

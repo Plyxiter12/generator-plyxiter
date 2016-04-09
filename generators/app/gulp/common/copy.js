@@ -2,14 +2,13 @@
 
 var config = require('../config');
 var gulp   = require('gulp');
+var browserSync = require('browser-sync');
+var reload = browserSync.reload;
 
 gulp.task('copy-image', function() {
   return gulp.src([
       config.APP_SRC_IMG + '/**/*'
-  ]).pipe(gulp.dest(config.APP_DIST_IMG));
-});
-
-gulp.task('copy-prod', function() {
-  return gulp.src([config.APP_DIST_INDEX_FILE])
-      .pipe(gulp.dest(config.APP_PROD));
+  ])
+  .pipe(gulp.dest(config.APP_DIST_IMG))
+  .pipe(reload({stream: true}));
 });

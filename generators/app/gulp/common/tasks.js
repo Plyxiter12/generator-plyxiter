@@ -1,38 +1,26 @@
 'use strict';
 
 var gulp = require('gulp');
-var gulpSequence = require('gulp-sequence');
+var runSequence = require('run-sequence');
 
 gulp.task('default', function(cb) {
-  gulpSequence(
+  runSequence(
       'build',
       cb
   );
 });
 
-gulp.task('servers', function(cb) {
-  gulpSequence(
-      'dev-server',
-      'dist-server',
-      cb
-  );
-});
-
 gulp.task('deploy', function(cb) {
-  gulpSequence(
+  runSequence(
       cb
   );
 });
 
 gulp.task('prod', function(cb) {
-  gulpSequence(
+  runSequence(
       'clean-prod',
-      'copy-prod',
-      'image-min',
-      'rev-css',
-      'rev-js',
-      'rev-html',
-      'preprocess-prod',
+      'min-all',
+      'rev',
       'prod-server',
       cb
   );

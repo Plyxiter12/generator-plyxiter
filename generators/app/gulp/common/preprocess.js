@@ -1,8 +1,10 @@
 'use strict';
 
-var config     = require('../config');
-var gulp       = require('gulp');
-var preprocess = require('gulp-preprocess');
+var config      = require('../config');
+var gulp        = require('gulp');
+var preprocess  = require('gulp-preprocess');
+var browserSync = require('browser-sync');
+var reload      = browserSync.reload;
 
 var context = {
   dev: {
@@ -18,7 +20,8 @@ var task = function(target, location) {
                .pipe(preprocess({
                  context: context[target]
                }))
-               .pipe(gulp.dest(location));
+               .pipe(gulp.dest(location))
+               .pipe(reload({stream: true}));
 };
 
 // the actual tasks

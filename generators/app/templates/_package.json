@@ -3,8 +3,6 @@
     "version": "0.0.1",
     "devDependencies": {
         "browser-sync": "^2.7.1",
-        "bower-resolve": "*",
-        "browserify": "^0.5.2",
         "compression": "*",
         "del": "^2.2.0",
         "express": "*",
@@ -19,23 +17,19 @@
         "gulp-less": "*",
         "gulp-nunjucks-render": "*",
         "gulp-preprocess": "*",
-        "gulp-rev": "*",
-        "gulp-rev-napkin": "*",
-        "gulp-sequence": "^0.4.3",
-        "gulp-sourcemaps": "*",
+        "gulp-rename": "*",
+        "gulp-rev-all": "*",
         "gulp-uglify": "*",
         "gulp-util": "*",
         "gulp-watch": "^4.3.3",
-        "lodash": "*",
-        "lodash.assign": "*",
-        "resolve": "*",
         "morgan": "*",
         "nunjucks": "*",
         "open": "^0.0.5",
-        "watchify": "*",
+        "require-dir": "*",
+        "run-sequence": "*",
         "vinyl-source-stream": "*"
     },
     "engines": {
         "node": ">=0.10.0"
-    }
+    },
 }
