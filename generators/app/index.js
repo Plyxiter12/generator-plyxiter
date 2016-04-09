@@ -56,7 +56,7 @@ module.exports = yeoman.Base.extend({
       var prompts = [{
         type: 'checkbox',
         name: 'features',
-        message: 'What Bower components would you like?',
+        message: 'What front-end components would you like?',
         choices: [{
           name: 'jQuery',
           value: 'includeJquery',
@@ -64,11 +64,11 @@ module.exports = yeoman.Base.extend({
         }, {
           name: 'FontAwesome',
           value: 'includeFontAwesome',
-          checked: true
+          checked: false
         }, {
-          name: 'Lodash',
-          value: 'includeLodash',
-          cehcked: false
+          name: 'Modernizr',
+          value: 'includeModernizr',
+          checked: false
         }]
       }];
 
@@ -81,7 +81,7 @@ module.exports = yeoman.Base.extend({
 
         this.includeJquery = hasFeature('includeJquery');
         this.includeFontAwesome = hasFeature('includeFontAwesome');
-        this.includeLodash = hasFeature('includeLodash');
+        this.includeModernizr = hasFeature('includeModernizr');
 
         done();
       }.bind(this));
@@ -115,12 +115,52 @@ module.exports = yeoman.Base.extend({
   },
 
   writing: {
+    app: function() {
+      //create file structure
+      this.directory('src');
+      this.mkdir('src/scripts');
+      this.mkdir('src/styles');
+      this.mkdir('src/images');
+    },
+
+    dependencies: function() {
+      var pkg = this.fs.readJSON(this.destinationPath('package.json'), {});
+
+      if (this.includeBootstrap) {
+        pkg.dependencies.bootstrap = '*';
+      }
+      if (this.includeJquery) {
+        pkg.dependencies.jquery = '*';
+      }
+      if (this.includeFontAwesome) {
+        pkg.dependencies['font-awesome'] = '*';
+      }
+      if (this.includeModernizr) {
+        pkg.dependencies.modernizr = '*';
+      }
+
+      this.fs.writeJSON(this.destinationPath('package.json'), pkg);
+    },
+
+    nunjucks: function() {
+      if (this.subgenerator === 'none') {
+        this.directory('../nunjucks', 'src/templates');
+      }
+    },
+
+    css: function() {
+      this.directory('../styles/defaults', 'src/styles');
+    },
 
     gulp: function() {
       this.copy('_Gulp.js', 'gulpfile.js');
       this.copy('../gulp/config.js', 'gulp/config.js');
       this.copy('../gulp/index.js', 'gulp/index.js');
       this.directory('../gulp/common', 'gulp/tasks');
+
+      if (this.includeFontAwesome) {
+        this.copy('../gulp/bower/fonts.js', 'gulp/tasks/fonts.js');
+      }
     },
 
     git: function() {
@@ -130,30 +170,6 @@ module.exports = yeoman.Base.extend({
 
     packageJSON: function() {
       this.template('_package.json', 'package.json');
-    },
-
-    bower: function() {
-      var bower = {
-        name: this.appname,
-        private: true,
-        dependencies: {}
-      };
-
-      if (this.includeBootstrap) {
-        bower.dependencies.bootstrap = '~3.2.0';
-      }
-      if (this.includeJquery) {
-        bower.dependencies.jquery = '~1.11.1';
-      }
-      if (this.includeFontAwesome) {
-        bower.dependencies.fontawesome = '*';
-      }
-      if (this.includeLodash) {
-        bower.dependencies.lodash = '*';
-      }
-
-      this.copy('_bowerrc', '.bowerrc');
-      this.write('bower.json', JSON.stringify(bower, null));
     },
 
     jshint: function() {
@@ -170,15 +186,6 @@ module.exports = yeoman.Base.extend({
 
     editorConfig: function() {
       this.copy('_editorconfig', '.editorconfig');
-    },
-
-    app: function() {
-      //create file structure
-      this.directory('src');
-      this.mkdir('src/scripts');
-      this.mkdir('src/styles');
-      this.mkdir('src/images');
-      this.template('../styles/_styles.less', 'src/styles/styles.less', this);
     }
   },
 
